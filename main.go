@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"gopkg.in/gomail.v2"
 )
@@ -37,8 +38,13 @@ func main() {
 		m := gomail.NewMessage()
 		m.SetHeader("From", os.Getenv("ILLICADO_MAIL_FROM"))
 		m.SetHeader("To", mail)
-		m.SetHeader("Subject", "CSE Neosoft Lille - Carte Illica")
-		m.SetBody("text/html", "")
+		m.SetHeader("Subject", "CSE Neosoft Lille - Cartes Illicado")
+		m.SetBody("text/html", "<h1>CSE Neosoft Lille - Carte Illicado</h1><p>Bonjour,<br /><br />Vous trouverez ci-joint vos cartes Illicado<br /><br />Votre CSE Neosoft Lille</p>")
+
+		file := fmt.Sprintf("./images/%s.png", strings.ReplaceAll(mail, "@"+domain, ""))
+		if fileExists(file) {
+			m.Attach(file)
+		}
 
 		for i := 0; i < 10; i++ {
 			file := fmt.Sprintf("./images/%s-%d.png", strings.ReplaceAll(mail, "@"+domain, ""), i)
@@ -52,6 +58,8 @@ func main() {
 		if err := d.DialAndSend(m); err != nil {
 			panic(err)
 		}
+
+		time.Sleep(2 * time.Second)
 	}
 
 }
